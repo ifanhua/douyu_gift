@@ -22,14 +22,14 @@ def get_glow():
     :return: 领取结果的基本格式
     """
     # 需要先访问一次直播间才会获得道具
-    logger.info("------正在获取荧光棒------")
+    logger.info("------正在获取钻粉荧光棒------")
     go_room()
     glow_url = "/japi/prop/backpack/web/v1?rid=10055"
     glow_res = dyreq.request("get", glow_url)
     global Bags
     logger.info("------背包检查开始------")
     try:
-        # 查询获取到的荧光棒
+        # 查询获取到的钻粉荧光棒
         assert glow_res.status_code == 200
         assert glow_res.json()['msg'] == "success"
         # 防止没有道具导致程序报错
@@ -39,7 +39,7 @@ def get_glow():
                 Own = jsonpath(glow_res.json(), '$..list[?(@.id == 2358)].count')[0]
                 logger.info("当前拥有钻粉荧光棒%s个,给你喜欢的主播进行赠送吧" % Own)
             except TypeError as e:
-                logger.error("背包当中没有荧光棒,但拥有其他礼物:%s" % e)
+                logger.error("背包当中没有钻粉荧光棒,但拥有其他礼物:%s" % e)
             Bags = 1
             logger.info("------背包检查结束------")
         else:
