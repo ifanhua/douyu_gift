@@ -24,7 +24,7 @@ def get_glow():
     # 需要先访问一次直播间才会获得道具
     logger.info("------正在获取荧光棒------")
     go_room()
-    glow_url = "/japi/prop/backpack/web/v1?rid=12306"
+    glow_url = "/japi/prop/backpack/web/v1?rid=10055"
     glow_res = dyreq.request("get", glow_url)
     global Bags
     logger.info("------背包检查开始------")
@@ -37,7 +37,7 @@ def get_glow():
             global Own
             try:
                 Own = jsonpath(glow_res.json(), '$..list[?(@.id == 2358)].count')[0]
-                logger.info("当前拥有荧光棒%s个,给你喜欢的主播进行赠送吧" % Own)
+                logger.info("当前拥有钻粉荧光棒%s个,给你喜欢的主播进行赠送吧" % Own)
             except TypeError as e:
                 logger.error("背包当中没有荧光棒,但拥有其他礼物:%s" % e)
             Bags = 1
@@ -49,7 +49,7 @@ def get_glow():
         if glow_res.json()['msg'] == '请登录':
             logger.error("请更新COOKIE")
         else:
-            logger.error("领取荧光棒时发生错误")
+            logger.error("领取钻粉荧光棒时发生错误")
         logger.info("------背包检查结束------")
     return glow_res
 
@@ -61,13 +61,13 @@ def get_own():
     return Own
 
 
-def glow_donate(num=1, room_id=12306):
+def glow_donate(num=1, room_id=10055):
     """
-    :param num: 向该房间赠送荧光棒的数量
+    :param num: 向该房间赠送钻粉荧光棒的数量
     :param room_id: 房间号
     """
     donate_url = "/japi/prop/donate/mainsite/v1"
-    DATA = "propId=268&propCount=%s&roomId=%s&bizExt={\"yzxq\":{}}" % (num, room_id)
+    DATA = "propId=2358&propCount=%s&roomId=%s&bizExt={\"yzxq\":{}}" % (num, room_id)
     # 背包中含有道具才会进行赠送，否则会报错
     if Bags:
         donate_res = dyreq.request(method="post", path=donate_url, data=DATA)
@@ -75,13 +75,13 @@ def glow_donate(num=1, room_id=12306):
         try:
             assert donate_res.status_code == 200
             assert donate_res.json()['msg'] == "success"
-            # 计算剩余荧光棒
+            # 计算剩余钻粉荧光棒
             now_left = int(Own) - int(num)
             Own = now_left
-            logger.info("向房间号%s赠送荧光棒%s个成功,当前剩余%s个" % (room_id, num, now_left))
+            logger.info("向房间号%s赠送钻粉荧光棒%s个成功,当前剩余%s个" % (room_id, num, now_left))
         except AssertionError:
             if donate_res.json()['msg'] == "用户没有足够的道具":
-                logger.warning("向房间号%s赠送荧光棒失败,当前背包中荧光棒数量为:%s,而设定捐赠数量为%s" % (room_id, Own, num))
+                logger.warning("向房间号%s赠送钻粉荧光棒失败,当前背包中钻粉荧光棒数量为:%s,而设定捐赠数量为%s" % (room_id, Own, num))
             else:
                 logger.warning(donate_res.json()['msg'])
 
@@ -95,7 +95,7 @@ def go_room():
     chrome_options.add_argument('--headless')  # 无界面
     driver = webdriver.Chrome(executable_path=driver_path, options=chrome_options)
     logger.info("打开直播间")
-    driver.get('https://www.douyu.com/8291425')
+    driver.get('https://www.douyu.com/806928')
     dy_cookie = set_cookie(dyreq.cookie)
     for i in dy_cookie.keys():
         mycookie = {
